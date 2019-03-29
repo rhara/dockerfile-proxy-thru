@@ -22,9 +22,13 @@ ENV ftp_proxy http://${PROXY_FULL}
 
 # [ APT ] ------------------------------
 
-RUN echo Aquire::ftp::proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf
-RUN echo Aquire::http::proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf
-RUN echo Aquire::https::proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf
+RUN echo Aquire::ftp::Proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf
+RUN echo Aquire::http::Proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf
+RUN echo Aquire::https::Proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf
+
+RUN echo Aquire::ftp::Proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf.d/proxy.conf
+RUN echo Aquire::http::Proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf.d/proxy.conf
+RUN echo Aquire::https::Proxy '"'http://${PROXY_FULL}'";' >> /etc/apt/apt.conf.d/proxy.conf
 
 RUN apt-get update
 RUN apt-get upgrade -y
