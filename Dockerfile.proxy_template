@@ -32,7 +32,7 @@ RUN git config --global https.proxy http://${PROXY_FULL}
 ###PIP
 RUN mkdir -p /root/.pip
 RUN echo [global] >> /root/.pip/pip.conf
-RUN echo "proxy = ${PROXY_FULL} >> /root/.pip/pip.conf
+RUN echo "proxy = ${PROXY_FULL}" >> /root/.pip/pip.conf
 
 ###CONDA
 RUN echo proxy_servers: >> /root/.condarc
