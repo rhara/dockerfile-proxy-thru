@@ -1,0 +1,57 @@
+FROM {{image}}
+
+ENV PROXY_USER {{userid}}
+ENV PROXY_PASSWORD {{password}}
+ENV PROXY_SERVER {{server}}
+ENV PROXY_PORT {{port}}
+
+ENV PROXY_FULL http://${PROXY_USER}:${PROXY_PASSWORD}@${PROXY_SERVER}:${PROXY_PORT}
+
+###ENVIRONMENT
+ENV HTTP_PROXY $PROXY_FULL
+ENV HTTPS_PROXY $PROXY_FULL
+ENV FTP_PROXY $PROXY_FULL
+ENV http_proxy $PROXY_FULL
+ENV https_proxy $PROXY_FULL
+ENV ftp_proxy $PROXY_FULL
+
+###APT
+RUN echo Aquire::ftp::proxy '"'${PROXY_FULL}'";' >> /etc/apt/apt.conf
+RUN echo Aquire::http::proxy '"'${PROXY_FULL}'";' >> /etc/apt/apt.conf
+RUN echo Aquire::https::proxy '"'${PROXY_FULL}'";' >> /etc/apt/apt.conf
+
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install wget -y
+RUN apt-get install git -y
+
+###GIT
+RUN git config --global http.proxy ${HTTP_PROXY}
+RUN git config --global https.proxy ${HTTPS_PROXY}
+
+###PIP
+RUN mkdir -p /root/.pip
+RUN echo [global] >> /root/.pip/pip.conf
+RUN echo "proxy = ${PROXY_USER}:${PROXY_PASSWORD}@${PROXY_SERVER}:${PROXY_PORT}" >> /root/.pip/pip.conf
+
+###CONDA
+RUN echo proxy_servers: >> /root/.condarc
+RUN echo '   'http: ${PROXY_FULL} >> /root/.condarc
+RUN echo '   'https: ${PROXY_FULL} >> /root/.condarc
+
+###WGET
+RUN echo use_proxy = on >> /root/.wgetrc
+RUN echo proxy_user = ${PROXY_USER} >> /root/.wgetrc
+RUN echo proxy_passwd = ${PROXY_PASSWORD} >> /root/.wgetrc
+RUN echo http_proxy = ${PROXY_FULL} >> /root/.wgetrc
+RUN echo https_proxy = ${PROXY_FULL} >> /root/.wgetrc
+RUN echo ftp_proxy = ${PROXY_FULL} >> /root/.wgetrc
+RUN echo progress = bar:force:noscroll >> /root/.wgetrc
+
+###CURL
+RUN echo proxy=${PROXY_FULL} >> /root/.curlrc
+
+RUN echo Done for your PROXY
+
+### NORMAL Dockerfile description follows below
+
